@@ -409,7 +409,8 @@ class Collection(object):
                             timestamp_formatter=rh.identity, ts_fmt=None,
                             ts_tz=None, admin_fmt=False, item_format='',
                             load_ref_data=False):
-        """Wrapper to self.get
+        """
+        Wrapper to self.get
 
         - fields: string of field names to get separated by any of , ; |
         - include_meta: if True include attributes _id and _ts
