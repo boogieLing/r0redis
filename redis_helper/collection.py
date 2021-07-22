@@ -233,7 +233,6 @@ class Collection(object):
 
     def add(self, **data):
         """Add all fields and values in data to the collection
-
         If self._unique_field is a non-empty string, that field must be provided
         in the data and there must not be an item in the collection with the
         same value for that field
