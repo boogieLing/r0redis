@@ -5,13 +5,11 @@ import settings_helper as sh
 from redis import StrictRedis, ConnectionError
 from time import sleep
 
-
 __doc__ = """Create an instance of `redis_helper.Collection` and use it
 
 import redis_helper as rh
 model = rh.Collection(...)
 """
-
 
 logger = fh.get_logger(__name__)
 SETTINGS = sh.get_all_settings(__name__).get(sh.APP_ENV, {})

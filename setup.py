@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 
-
 with open('README.rst', 'r') as fp:
     long_description = fp.read()
 
@@ -9,11 +8,11 @@ setup(
     version='0.4.1',
     description='Easily store, index, and modify Python dicts in Redis (with flexible searching)',
     long_description=long_description,
-    author='Ken',
-    author_email='kenjyco@gmail.com',
+    author='r0',
+    author_email='boogieLing_o@163.com',
     license='MIT',
-    url='https://github.com/kenjyco/redis-helper',
-    download_url='https://github.com/kenjyco/redis-helper/tarball/v0.4.0',
+    url='https://github.com/boogieLing/r0-redis-helper',
+    download_url='https://github.com/boogieLing/r0-redis-helper/tarball/v0.4.1',
     packages=find_packages(),
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
