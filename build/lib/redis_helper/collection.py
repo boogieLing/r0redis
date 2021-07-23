@@ -277,7 +277,7 @@ class Collection(object):
         if self._insert_ts:
             pipe.zadd(self._in_zset_key, {key: now})
         pipe.hset(key, mapping=data)
-        pipe.expire(key, time=10)
+        pipe.expire(key, time=11)
         for index_field, base_key in self._index_base_keys.items():
             key_name = self._make_key(base_key, data.get(index_field))
             pipe.sadd(key_name, key)
