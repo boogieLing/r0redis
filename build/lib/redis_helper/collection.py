@@ -14,7 +14,6 @@ from io import StringIO
 from pprint import pprint
 from redis import ResponseError
 
-
 META_FIELDS = {'_id', '_ts'}
 _CURLY_MATCHER = ih.matcher.CurlyMatcher()
 
@@ -29,6 +28,7 @@ class Collection(object):
     - filter through indexed fields with simple/flexible find arguments
     - gather count metrics or actual data at a variety of time ranges at once
     """
+
     def __init__(self, namespace, name, unique_field='', index_fields='',
                  json_fields='', pickle_fields='', expected_fields='',
                  reference_fields='',
@@ -71,18 +71,18 @@ class Collection(object):
         u = set([unique_field])
         invalid = (
             index_fields_set.intersection(self._json_fields)
-            .union(index_fields_set.intersection(self._pickle_fields))
-            .union(index_fields_set.intersection(u))
-            .union(self._json_fields.intersection(self._pickle_fields))
-            .union(self._json_fields.intersection(u))
-            .union(self._pickle_fields.intersection(u))
+                .union(index_fields_set.intersection(self._pickle_fields))
+                .union(index_fields_set.intersection(u))
+                .union(self._json_fields.intersection(self._pickle_fields))
+                .union(self._json_fields.intersection(u))
+                .union(self._pickle_fields.intersection(u))
         )
         assert invalid == set(), 'field(s) used in too many places: {}'.format(invalid)
         invalid = (
             META_FIELDS.intersection(
                 index_fields_set.union(self._json_fields)
-                .union(self._pickle_fields)
-                .union(u)
+                    .union(self._pickle_fields)
+                    .union(u)
             )
         )
         assert invalid == set(), '{} not allowed to be saved or updated'.format(invalid)
@@ -231,7 +231,7 @@ class Collection(object):
             sleep(sleeptime)
         return total_sleep
 
-    def add(self, **data):
+    def add(self, ttl=60, **data):
         """
         Add all fields and values in data to the collection
         If self._unique_field is a non-empty string, that field must be provided
@@ -277,12 +277,12 @@ class Collection(object):
         if self._insert_ts:
             pipe.zadd(self._in_zset_key, {key: now})
         pipe.hset(key, mapping=data)
-        pipe.expire(key, time=11)
         for index_field, base_key in self._index_base_keys.items():
             key_name = self._make_key(base_key, data.get(index_field))
             pipe.sadd(key_name, key)
             pipe.zincrby(base_key, 1, str(data.get(index_field)))
         pipe.execute()
+        rh.REDIS.expire(key, time=ttl)
         self._unlock()
         return key
 
@@ -397,7 +397,6 @@ class Collection(object):
         if len(results) == 1:
             return results[0]
         return results
-
 
     def get_hash_id_for_unique_value(self, unique_val):
         """Return the hash_id of the object that has unique_val in _unique_field"""
@@ -993,7 +992,7 @@ class Collection(object):
         limit = self.size if limit is None else limit
         return [
             ih.decode(val)
-            for val in rh.REDIS.zrevrange(self._id_zset_key, start=0, end=limit-1)
+            for val in rh.REDIS.zrevrange(self._id_zset_key, start=0, end=limit - 1)
         ]
 
     def all_unique_values(self):
@@ -1021,7 +1020,7 @@ class Collection(object):
         base_key = self._index_base_keys[index_name]
         return [
             (ih.decode(name), int(count))
-            for name, count in rh.zshow(base_key, end=limit-1)
+            for name, count in rh.zshow(base_key, end=limit - 1)
         ]
 
     def index_field_info(self, limit=None):
@@ -1035,7 +1034,7 @@ class Collection(object):
         for index_field, base_key in sorted(self._index_base_keys.items()):
             results.extend([
                 (':'.join([index_field, ih.decode(name)]), int(count))
-                for name, count in rh.zshow(base_key, end=limit-1)
+                for name, count in rh.zshow(base_key, end=limit - 1)
             ])
         return results
 
@@ -1361,7 +1360,7 @@ class Collection(object):
         results['counts'] = OrderedDict(count_stats[:limit])
         results['sizes'] = OrderedDict(size_stats[:limit])
         results['timestamps'] = OrderedDict()
-        newest = rh.zshow(self._find_searches_zset_key, end=3*(limit-1))
+        newest = rh.zshow(self._find_searches_zset_key, end=3 * (limit - 1))
         for name, ts in newest:
             results['timestamps'][ih.decode(name)] = (
                 ts,
