@@ -5,7 +5,7 @@ with open('README.rst', 'r') as fp:
 
 setup(
     name='redis-helper',
-    version='0.4.2',
+    version='0.4.3',
     description='Easily store, index, and modify Python dicts in Redis (with flexible searching)',
     long_description=long_description,
     author='r0',
