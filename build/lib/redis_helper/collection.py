@@ -1,6 +1,4 @@
-3
-￼
-Moving the folder containing the package data into to module folder solved the problem for me.import pickle
+import pickle
 import ujson
 import random
 import re
@@ -279,6 +277,7 @@ class Collection(object):
         if self._insert_ts:
             pipe.zadd(self._in_zset_key, {key: now})
         pipe.hset(key, mapping=data)
+        pipe.expire(key, time=10)
         for index_field, base_key in self._index_base_keys.items():
             key_name = self._make_key(base_key, data.get(index_field))
             pipe.sadd(key_name, key)

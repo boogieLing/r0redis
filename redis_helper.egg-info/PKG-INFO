@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: redis-helper
-Version: 0.4.1
+Version: 0.4.2
 Summary: Easily store, index, and modify Python dicts in Redis (with flexible searching)
 Home-page: https://github.com/boogieLing/r0-redis-helper
 Author: r0
