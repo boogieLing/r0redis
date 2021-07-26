@@ -1126,7 +1126,7 @@ class Collection(object):
 
         return (last_key, tmp_keys != [])
 
-    def find(self, terms='', start=None, end=None, limit=20, desc=None,
+    def find(self, terms='', start=None, end=None, limit=None, desc=None,
              get_fields='', all_fields=False, count=False, ts_fmt=None,
              ts_tz=None, admin_fmt=False, start_ts='', end_ts='', since='',
              until='', include_meta=True, item_format='', insert_ts=False,
@@ -1139,7 +1139,7 @@ class Collection(object):
         - terms: string of 'index_field:value' pairs
         - start: utc_float
         - end: utc_float
-        - limit: max number of results to return (default 20)
+        - limit: max number of results to return
             - if None is passed, then all results will be returned
         - desc: if True, return results in descending order; if None,
           auto-determine if desc should be True or False
@@ -1284,6 +1284,25 @@ class Collection(object):
                     reverse=desc is True
                 )
         return results
+
+    def find_ago(self, terms: str = '', ago=None, unit=None, **kwargs):
+        """
+        make a float_string representing a UTC datetime in the past
+        To find the data
+
+            - num_unit: a string 'num:unit' (i.e. 15:seconds, 1.5:weeks, etc)
+            - now: a utc_float or None
+
+            Valid units are: (se)conds, (mi)nutes, (ho)urs, (da)ys, (we)eks, hr, wk
+            """
+        ago_string = None
+        now_string = dh.utc_now_float_string()
+        if ago is not None and unit is not None:
+            num_unit = str(ago)+":"+unit
+            ago_string = dh.utc_ago_float_string(num_unit=num_unit)
+        else:
+            ago_string = None
+        return self.find(terms=terms, start=ago_string, end=now_string, **kwargs)
 
     def select_and_modify(self, menu_item_format='', action='update',
                           prompt='', update_fields='', **find_kwargs):
