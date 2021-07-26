@@ -117,10 +117,10 @@ def implicit_connect(url=REDIS_URL, attempt_docker=True, exception=False, show=F
     return (False, float('inf'))
     """
     global REDIS_URL, REDIS
-    print(url)
     REDIS_URL = url
     REDIS = StrictRedis.from_url(REDIS_URL)
     try:
+        REDIS.ping()
         size = REDIS.dbsize()
     except (ConnectionError, AttributeError):
         if attempt_docker:
@@ -133,14 +133,14 @@ def implicit_connect(url=REDIS_URL, attempt_docker=True, exception=False, show=F
                 REDIS = None
                 if exception is True:
                     raise
-                return False, float('inf')
+                return False, -1
             else:
                 return True, size
         else:
             REDIS = None
             if exception is True:
                 raise
-            return False, float('inf')
+            return False, -1
     else:
         return True, size
 

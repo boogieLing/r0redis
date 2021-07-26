@@ -29,7 +29,8 @@ class Collection(object):
     - gather count metrics or actual data at a variety of time ranges at once
     """
 
-    def __init__(self, namespace, name, unique_field='', index_fields='',
+    def __init__(self, namespace, name, url: str = None, port: int = 6379, db: int = 0, unique_field='',
+                 index_fields='',
                  json_fields='', pickle_fields='', expected_fields='',
                  reference_fields='',
                  insert_ts=False, list_name='', **kwargs):
@@ -51,7 +52,10 @@ class Collection(object):
         Separate fields in strings by any of , ; |
         """
         if rh.REDIS is None:
-            connected, _ = rh.connect_to_server()
+            if url is not None:
+                connected, _ = rh.explicit_connect(url)
+            else:
+                connected, _ = rh.implicit_connect()
             if not connected:
                 raise Exception('Unable to connect to {}'.format(rh.REDIS_URL))
         self._namespace = namespace
@@ -68,7 +72,7 @@ class Collection(object):
         self.field_rx_dict = {}
         self.field_reference_dict = {}
 
-        u = set([unique_field])
+        u = {unique_field}
         invalid = (
             index_fields_set.intersection(self._json_fields)
                 .union(index_fields_set.intersection(self._pickle_fields))
