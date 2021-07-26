@@ -4,8 +4,8 @@ import bg_helper as bh
 import redis_helper as rh
 from redis import ConnectionError
 
-REDIS_CONNECTED, DBSIZE = rh.explicit_connect(redis_host="127.0.0.1", redis_port=6379, redis_db=0)
-# REDIS_CONNECTED, DBSIZE = rh.implicit_connect("redis://127.0.0.1:6379/0")
+# REDIS_CONNECTED, DBSIZE = rh.explicit_connect(redis_host="127.0.0.1", redis_port=6379, redis_db=0)
+REDIS_CONNECTED, DBSIZE = rh.implicit_connect("redis://127.0.0.1:6379/13")
 
 WORDS = ['goats', 'dogs', 'grapes', 'bananas', 'smurfs', 'snorks', 'links', 'queries']
 
@@ -70,7 +70,7 @@ class TestCollection:
         data = generate_coll1_data()
         hash_id = coll1.add(**data)
         retrieved = coll1.get(hash_id)
-        assert retrieved == data
+        assert (retrieved == data)
 
     def test_add_and_get_some(self, coll1):
         data = generate_coll1_data()
@@ -140,6 +140,16 @@ class TestCollection:
         assert coll4.find('b:triangle, c:spotted', count=True) == 3
         assert coll4.find('b:triangle, b:square, c:striped, c:plain', count=True) == 4
         assert coll4.find('a:red, b:triangle, b:square, c:spotted, c:plain', count=True) == 3
+
+    def test_find_age(self, coll4):
+        assert len(coll4.find_ago(ago=2, unit="hours")) == 10
+        assert len(coll4.find_ago(ago=2, unit="days", limit=5)) == 5
+        assert coll4.find_ago('a:blue', ago=0, unit="hours", count=True) == 0
+        assert coll4.find_ago('a:red, a:yellow', count=True) == 6
+        assert len(coll4.find_ago('a:red, a:yellow', limit=3)) == 3
+        assert coll4.find_ago('b:triangle, c:spotted', count=True) == 3
+        assert coll4.find_ago('b:triangle, b:square, c:striped, c:plain', count=True) == 4
+        assert coll4.find_ago('a:red, b:triangle, b:square, c:spotted, c:plain', count=True) == 3
 
     def test_delete(self, coll4):
         reds = coll4.find('a:red')
