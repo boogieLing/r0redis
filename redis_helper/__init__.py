@@ -1,8 +1,12 @@
+import sys
+import time
+import traceback
+
 import bg_helper as bh
 import fs_helper as fh
 import input_helper as ih
 import settings_helper as sh
-from redis import StrictRedis, ConnectionError
+from redis import StrictRedis, ConnectionError, ConnectionPool
 from time import sleep
 
 __doc__ = """Create an instance of `redis_helper.Collection` and use it
@@ -99,7 +103,7 @@ def stop_docker(exception=False, show=False):
     return bh.tools.docker_stop(SETTINGS['container_name'], exception=exception, show=show)
 
 
-def connect_to_server(url=REDIS_URL, attempt_docker=True, exception=False, show=False):
+def implicit_connect(url=REDIS_URL, attempt_docker=True, exception=False, show=False):
     """Connect to the redis server and set the REDIS variable
 
     - url: if no url is specified, use the redis_url from settings.ini (or check
@@ -113,6 +117,7 @@ def connect_to_server(url=REDIS_URL, attempt_docker=True, exception=False, show=
     return (False, float('inf'))
     """
     global REDIS_URL, REDIS
+    print(url)
     REDIS_URL = url
     REDIS = StrictRedis.from_url(REDIS_URL)
     try:
@@ -128,16 +133,60 @@ def connect_to_server(url=REDIS_URL, attempt_docker=True, exception=False, show=
                 REDIS = None
                 if exception is True:
                     raise
-                return (False, float('inf'))
+                return False, float('inf')
             else:
-                return (True, size)
+                return True, size
         else:
             REDIS = None
             if exception is True:
                 raise
-            return (False, float('inf'))
+            return False, float('inf')
     else:
-        return (True, size)
+        return True, size
+
+
+def explicit_connect(redis_host: str, redis_port: int = 6379, redis_db: int = 0, health_check_interval=30,
+                     attempt_docker: bool = False, exception: bool = False, show: bool = False):
+    global REDIS
+    pool = ConnectionPool(host=redis_host, port=redis_port)
+
+    retry_num = 5
+    while retry_num > 0:
+        try:
+            REDIS = StrictRedis(connection_pool=pool, db=redis_db, health_check_interval=health_check_interval)
+            REDIS.ping()
+            ans_size = REDIS.dbsize()
+        except ConnectionError:
+            # Unconditionally perform reconnection operation.
+            print(f'redis connect failure, try again {retry_num}', file=sys.stderr)
+            retry_num -= 1
+            if retry_num == 0:
+                print(traceback.print_exc(), file=sys.stderr)
+                if exception is True:
+                    raise
+                return False, -1
+            time.sleep(1)
+            if attempt_docker is True:
+                start_docker(exception=exception, show=show)
+                time.sleep(1)
+                REDIS = StrictRedis.from_url(REDIS_URL)
+                try:
+                    ans_size = REDIS.dbsize()
+                except (ConnectionError, AttributeError):
+                    REDIS = None
+                    if exception is True:
+                        raise
+                    return False, -1
+                else:
+                    return True, ans_size
+
+        except Exception as e:
+            print(f"error: {e}\n{traceback.print_exc()}", file=sys.stderr)
+            if exception is True:
+                raise
+            return False, -1
+        else:
+            return True, ans_size
 
 
 from .collection import Collection

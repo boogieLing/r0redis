@@ -51,7 +51,8 @@ class Collection(object):
         Separate fields in strings by any of , ; |
         """
         if rh.REDIS is None:
-            connected, _ = rh.connect_to_server()
+            # connected, _ = rh.implicit_connect()
+            connected, _ = rh.explicit_connect("redis://localhost")
             if not connected:
                 raise Exception('Unable to connect to {}'.format(rh.REDIS_URL))
         self._namespace = namespace
@@ -68,7 +69,7 @@ class Collection(object):
         self.field_rx_dict = {}
         self.field_reference_dict = {}
 
-        u = set([unique_field])
+        u = {unique_field}
         invalid = (
             index_fields_set.intersection(self._json_fields)
                 .union(index_fields_set.intersection(self._pickle_fields))
