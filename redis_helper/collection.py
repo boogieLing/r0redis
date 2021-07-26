@@ -29,7 +29,8 @@ class Collection(object):
     - gather count metrics or actual data at a variety of time ranges at once
     """
 
-    def __init__(self, namespace, name, url: str = None, port: int = 6379, db: int = 0, unique_field='',
+    def __init__(self, namespace, name, host: str = None, port: int = 6379, db: int = 0, health_check_interval=30,
+                 unique_field='',
                  index_fields='',
                  json_fields='', pickle_fields='', expected_fields='',
                  reference_fields='',
@@ -52,8 +53,9 @@ class Collection(object):
         Separate fields in strings by any of , ; |
         """
         if rh.REDIS is None:
-            if url is not None:
-                connected, _ = rh.explicit_connect(url)
+            if host is not None:
+                connected, _ = rh.explicit_connect(redis_host=host, redis_port=port, redis_db=db,
+                                                   health_check_interval=health_check_interval)
             else:
                 connected, _ = rh.implicit_connect()
             if not connected:
