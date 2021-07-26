@@ -1131,7 +1131,8 @@ class Collection(object):
              ts_tz=None, admin_fmt=False, start_ts='', end_ts='', since='',
              until='', include_meta=True, item_format='', insert_ts=False,
              load_ref_data=False, post_fetch_sort_key='', sort_key_default_val=''):
-        """Return a list of dicts (or dict of list of dicts) that match all terms
+        """
+        Return a list of dicts (or dict of list of dicts) that match all terms
 
         Multiple values in (terms, get_fields, start_ts, end_ts, since, until)
         must be separated by any of , ; |
