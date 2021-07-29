@@ -237,7 +237,16 @@ class Collection(object):
             sleep(sleeptime)
         return total_sleep
 
-    def add(self, ttl=60, **data):
+    def ttl(self, field: str, ttl: int = None):
+        field_final = ":".join([self.namespace, self.name, field])
+        print(field_final)
+        if not rh.REDIS.exists(field_final):
+            return float("inf")
+        if ttl is not None:
+            rh.REDIS.expire(field_final, ttl)
+        return rh.REDIS.ttl(field_final)
+
+    def add(self, **data):
         """
         Add all fields and values in data to the collection
         If self._unique_field is a non-empty string, that field must be provided
@@ -288,7 +297,7 @@ class Collection(object):
             pipe.sadd(key_name, key)
             pipe.zincrby(base_key, 1, str(data.get(index_field)))
         pipe.execute()
-        rh.REDIS.expire(key, time=ttl)
+        # rh.REDIS.expire(key, time=ttl)
         self._unlock()
         return key
 
@@ -1295,11 +1304,11 @@ class Collection(object):
             - now: a utc_float or None
 
             Valid units are: (se)conds, (mi)nutes, (ho)urs, (da)ys, (we)eks, hr, wk
-            """
+        """
         ago_string = None
         now_string = dh.utc_now_float_string()
         if ago is not None and unit is not None:
-            num_unit = str(ago)+":"+unit
+            num_unit = str(ago) + ":" + unit
             ago_string = dh.utc_ago_float_string(num_unit=num_unit)
         else:
             ago_string = None
