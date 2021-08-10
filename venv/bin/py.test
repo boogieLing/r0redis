@@ -1,4 +1,4 @@
-#!/home/DEEPROUTE/hanyuanling/Desktop/r0_redis_helper/venv/bin/python
+#!/home/DEEPROUTE/hanyuanling/Desktop/tools/r0_redis_helper/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

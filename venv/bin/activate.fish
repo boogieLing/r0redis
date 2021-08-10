@@ -29,7 +29,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/DEEPROUTE/hanyuanling/Desktop/r0_redis_helper/venv"
+set -gx VIRTUAL_ENV "/home/DEEPROUTE/hanyuanling/Desktop/tools/r0_redis_helper/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

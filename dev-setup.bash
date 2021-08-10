@@ -29,5 +29,5 @@ $PYTHON setup.py develop
 
 if [[ ! -f "$HOME/.config/redis-helper/settings.ini" ]]; then
     mkdir -pv "$HOME/.config/redis-helper"
-    cp -av redis_helper/settings.ini "$HOME/.config/redis-helper"
+    cp -av r0redis/settings.ini "$HOME/.config/redis-helper"
 fi

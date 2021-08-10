@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/DEEPROUTE/hanyuanling/Desktop/r0_redis_helper/venv"
+VIRTUAL_ENV="/home/DEEPROUTE/hanyuanling/Desktop/tools/r0_redis_helper/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

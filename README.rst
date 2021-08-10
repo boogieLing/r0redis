@@ -474,7 +474,7 @@ The ``rh-download-examples``, ``rh-download-scripts``, ``rh-notes``, and
 
 .. code:: python
 
-   >>> import redis_helper as rh
+   >>> import r0redis as rh
    >>> collection = rh.Collection(..., index_fields='field1, field3')
    >>> hash_id = collection.add(field1='', field2='', field3='', ...)
    >>> collection.add(...)

@@ -1,0 +1,6 @@
+[console_scripts]
+rh-download-examples = r0redis.scripts.download_examples:main
+rh-download-scripts = r0redis.scripts.download_scripts:main
+rh-notes = r0redis.scripts.notes:main
+rh-shell = r0redis.scripts.shell:main
+

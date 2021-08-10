@@ -131,7 +131,7 @@ When initializing Collection objects, you must specify the "namespace" and
 the `_base_key`.
 
 ```python
-import redis_helper as rh
+import r0redis as rh
 
 request_logs = rh.Collection(
     'log',
@@ -441,7 +441,7 @@ Options:
 ```
 
 ```python
->> > import redis_helper as rh
+>> > import r0redis as rh
 >> > collection = rh.Collection(..., index_fields='field1, field3')
 >> > hash_id = collection.add(field1='', field2='', field3='', ...)
 >> > collection.add(...)

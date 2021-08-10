@@ -4,8 +4,8 @@ with open('README.rst', 'r') as fp:
     long_description = fp.read()
 
 setup(
-    name='redis-helper',
-    version='0.4.4',
+    name='r0redis',
+    version='0.4.5',
     description='Easily store, index, and modify Python dicts in Redis (with flexible searching)',
     long_description=long_description,
     author='r0',
@@ -35,10 +35,10 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'rh-download-examples=redis_helper.scripts.download_examples:main',
-            'rh-download-scripts=redis_helper.scripts.download_scripts:main',
-            'rh-notes=redis_helper.scripts.notes:main',
-            'rh-shell=redis_helper.scripts.shell:main',
+            'rh-download-examples=r0redis.scripts.download_examples:main',
+            'rh-download-scripts=r0redis.scripts.download_scripts:main',
+            'rh-notes=r0redis.scripts.notes:main',
+            'rh-shell=r0redis.scripts.shell:main',
         ],
     },
     classifiers=[
